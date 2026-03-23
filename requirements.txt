@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+sqlalchemy
+redis
+python-jose[cryptography]
+passlib[bcrypt]
+google-generativeai
+httpx
+
+pytest
+pytest-asyncio
