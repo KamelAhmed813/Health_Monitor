@@ -15,7 +15,7 @@ class Settings(BaseSettings):
 
     # Storage / caching
     redis_url: str = Field(default="redis://localhost:6379/0")
-    sqlite_path: str = Field(default="backend/data/health.sqlite")
+    sqlite_path: str = Field(default="data/health.sqlite")
 
     # Google GenAI
     google_genai_api_key: str = Field(default="", description="Google GenAI API key")

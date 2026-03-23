@@ -81,6 +81,20 @@ def test_api_smoke_register_login_workout_meal_water_dashboard_cache_miss_then_h
     assert isinstance(login_token, str)
     assert login_token
 
+    invalid_login_response = client.post(
+        "/api/auth/login",
+        json={"email": "smoke@example.com", "password": "wrongpass"},
+    )
+    assert invalid_login_response.status_code == 401
+    assert invalid_login_response.json()["detail"] == "Invalid email or password"
+
+    duplicate_register_response = client.post(
+        "/api/auth/register",
+        json={"email": "smoke@example.com", "password": "testpass123"},
+    )
+    assert duplicate_register_response.status_code == 409
+    assert duplicate_register_response.json()["detail"] == "Email already registered"
+
     headers = {"Authorization": f"Bearer {access_token}"}
 
     workout_response = client.post(

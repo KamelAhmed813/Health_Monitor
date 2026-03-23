@@ -11,6 +11,9 @@ from config.settings import settings
 def _sqlite_url(path: str) -> str:
     # SQLAlchemy expects 3 slashes for absolute paths: sqlite:////absolute/path.db
     normalized = os.path.abspath(path)
+    parent_dir = os.path.dirname(normalized)
+    if parent_dir:
+        os.makedirs(parent_dir, exist_ok=True)
     return "sqlite:///" + normalized.replace("\\", "/")
 
 
@@ -25,8 +28,5 @@ SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False, clas
 
 def get_session() -> Session:
     # Minimal helper for repository wiring. In production, manage lifecycle via FastAPI dependencies.
-    parent_dir = os.path.dirname(os.path.abspath(settings.sqlite_path))
-    if parent_dir:
-        os.makedirs(parent_dir, exist_ok=True)
     return SessionLocal()
 

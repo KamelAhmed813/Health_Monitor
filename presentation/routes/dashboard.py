@@ -23,12 +23,12 @@ router = APIRouter()
 @router.get("/today", response_model=DashboardResponse)
 def dashboard_today(
     user_id: int = Depends(get_current_user_id),
-    day: str | None = Query(default=None, description="YYYY-MM-DD"),
+    day: date_type | None = Query(default=None, description="YYYY-MM-DD"),
 ):
     if day is None:
         day_obj = datetime.now(timezone.utc).date()
     else:
-        day_obj = date_type.fromisoformat(day)
+        day_obj = day
 
     cache: CacheService = get_cache()
     return DashboardResponse(
