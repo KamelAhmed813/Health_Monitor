@@ -10,5 +10,8 @@ def auth_login(*, email: str, password: str, user_repo: UserRepository) -> str:
     Authenticate user and return a JWT access token.
     """
 
-    raise NotImplementedError("auth_login use case not implemented yet")
+    user = user_repo.get_by_email(email)
+    if user is None or not verify_password(password, user.password_hash):
+        raise ValueError("Invalid email or password")
+    return create_access_token(subject=user.id)
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date as date_type
+from datetime import date as date_type, datetime, timezone
 
 from fastapi import APIRouter, Depends
 
@@ -47,8 +47,10 @@ def plan_next_day(
     user_id: int = Depends(get_current_user_id),
 ):
     ai_service = get_ai_service()
-    # request.day_payload is left flexible; next-day planning will use it later.
-    day = date_type.fromisoformat(request.day_payload.get("day")) if isinstance(request.day_payload, dict) else None
-    plan = ai_plan_meals_next_day(user_id=user_id, day=day, ai_service=ai_service)  # type: ignore[arg-type]
+    if isinstance(request.day_payload, dict) and request.day_payload.get("day"):
+        day = date_type.fromisoformat(str(request.day_payload.get("day")))
+    else:
+        day = datetime.now(timezone.utc).date()
+    plan = ai_plan_meals_next_day(user_id=user_id, day=day, ai_service=ai_service)
     return AiPlanMealsNextDayResponse(plan=plan)
 

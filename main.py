@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 
 from config.logging import configure_logging
+from infrastructure.db.models import Base
+from infrastructure.db.session import engine
 from presentation.routes.auth import router as auth_router
 from presentation.routes.workouts import router as workouts_router
 from presentation.routes.meals import router as meals_router
@@ -12,6 +14,11 @@ from presentation.routes.ai import router as ai_router
 configure_logging()
 
 app = FastAPI(title="Health Monitor API", version="0.1.0")
+
+
+@app.on_event("startup")
+def on_startup() -> None:
+    Base.metadata.create_all(bind=engine)
 
 
 @app.get("/health", tags=["health"])

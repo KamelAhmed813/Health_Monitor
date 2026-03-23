@@ -7,6 +7,7 @@ from presentation.security.jwt import decode_access_token
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+_cache_singleton = None
 
 
 def get_current_user_id(token: str = Depends(oauth2_scheme)) -> int:
@@ -29,7 +30,7 @@ def get_user_repo():
     from infrastructure.db.session import get_session
 
     session = get_session()
-    return UserRepositoryImpl(session)
+    return UserRepositoryImpl(session, get_cache())
 
 
 def get_workout_repo():
@@ -37,7 +38,7 @@ def get_workout_repo():
     from infrastructure.db.session import get_session
 
     session = get_session()
-    return WorkoutRepositoryImpl(session)
+    return WorkoutRepositoryImpl(session, get_cache())
 
 
 def get_meal_repo():
@@ -45,7 +46,7 @@ def get_meal_repo():
     from infrastructure.db.session import get_session
 
     session = get_session()
-    return MealRepositoryImpl(session)
+    return MealRepositoryImpl(session, get_cache())
 
 
 def get_water_repo():
@@ -53,7 +54,7 @@ def get_water_repo():
     from infrastructure.db.session import get_session
 
     session = get_session()
-    return WaterRepositoryImpl(session)
+    return WaterRepositoryImpl(session, get_cache())
 
 
 def get_target_repo():
@@ -61,14 +62,17 @@ def get_target_repo():
     from infrastructure.db.session import get_session
 
     session = get_session()
-    return TargetRepositoryImpl(session)
+    return TargetRepositoryImpl(session, get_cache())
 
 
 def get_cache():
     from infrastructure.cache.redis_cache import RedisCacheService
     from config.settings import settings
 
-    return RedisCacheService(redis_url=settings.redis_url)
+    global _cache_singleton
+    if _cache_singleton is None:
+        _cache_singleton = RedisCacheService(redis_url=settings.redis_url)
+    return _cache_singleton
 
 
 def get_ai_service():

@@ -11,5 +11,8 @@ def auth_register(*, email: str, password_hash: str, user_repo: UserRepository) 
     This is a skeleton implementation; wire validation/business rules later.
     """
 
-    raise NotImplementedError("auth_register use case not implemented yet")
+    existing = user_repo.get_by_email(email)
+    if existing is not None:
+        raise ValueError("Email already registered")
+    return user_repo.create(email=email, password_hash=password_hash)
 

@@ -88,6 +88,8 @@ class CacheService(Protocol):
 
     def set(self, key: str, value: Any, ttl_seconds: int) -> None: ...
 
+    def delete(self, *keys: str) -> int: ...
+
 
 @dataclass(frozen=True)
 class AiMealContext:

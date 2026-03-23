@@ -12,5 +12,10 @@ def log_workout(
     calories_burned: int | None,
     workout_repo: WorkoutRepository,
 ) -> Workout:
-    raise NotImplementedError("log_workout use case not implemented yet")
+    return workout_repo.add_workout(
+        user_id=user_id,
+        workout_type=workout_type,
+        duration_minutes=duration_minutes,
+        calories_burned=calories_burned,
+    )
 
